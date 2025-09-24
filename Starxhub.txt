@@ -1,20 +1,32 @@
--- Initialize services with error handling
-local Players, UserInputService, HttpService, GuiService
-local success, result = pcall(function()
-    Players = game:GetService("Players")
-    UserInputService = game:GetService("UserInputService")
-    HttpService = game:GetService("HttpService")
-    GuiService = game:GetService("GuiService")
-    return true
-end)
+wait(5)
+
+-- Initialize services with retry mechanism
+local Players, UserInputService, GuiService
+local attempts = 0
+local maxAttempts = 3
+local success, result
+
+while attempts < maxAttempts and not success do
+    success, result = pcall(function()
+        Players = game:GetService("Players")
+        UserInputService = game:GetService("UserInputService")
+        GuiService = game:GetService("GuiService")
+        return true
+    end)
+    attempts = attempts + 1
+    if not success then
+        print("[GunfightArenaX Debug] Attempt " .. attempts .. " failed to initialize services: " .. tostring(result))
+        wait(1)
+    end
+end
 
 local function debugPrint(message)
     print("[GunfightArenaX Debug] " .. tostring(message))
 end
 
 if not success then
-    debugPrint("Failed to initialize services: " .. tostring(result))
-    return -- Stop execution if services can't be loaded
+    debugPrint("Failed to initialize services after " .. maxAttempts .. " attempts: " .. tostring(result))
+    return
 end
 
 local Player = Players.LocalPlayer
@@ -25,8 +37,8 @@ end
 
 -- Key System Variables
 local isAuthenticated = false
-local correctKey = "starxhubontop" -- Predefined key for simplicity
-local keyLink = "https://link-hub.net/1402011/uBdd8VPMPt6F" -- Replace with actual key distribution link
+local correctKey = "GUNFIGHT_X_2025"
+local keyLink = "https://example.com/getkey" -- Replace with actual key distribution link
 local keyInputGui
 
 -- Create Key System GUI
@@ -69,7 +81,7 @@ local function createKeySystemGui()
         local SubmitButton = Instance.new("TextButton")
         SubmitButton.Size = UDim2.new(0.9, 0, 0, 40)
         SubmitButton.Position = UDim2.new(0.05, 0, 0.45, 0)
-        SubmitButton.BackgroundColor3 = Color3.fromRGB(0 Hoffman, 120, 255)
+        SubmitButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
         SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         SubmitButton.TextSize = 16
         SubmitButton.Font = Enum.Font.SourceSansBold
@@ -96,7 +108,6 @@ local function createKeySystemGui()
         StatusLabel.Text = ""
         StatusLabel.Parent = Frame
 
-        -- Corner rounding
         local UICorner = Instance.new("UICorner")
         UICorner.CornerRadius = UDim.new(0, 10)
         UICorner.Parent = Frame
@@ -164,7 +175,6 @@ local function initKeySystem()
                 debugPrint("Link copied: " .. keyLink)
                 wait(2)
                 statusLabel.Text = ""
-                statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
             else
                 statusLabel.Text = "Clipboard not supported!"
                 statusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
@@ -179,7 +189,7 @@ local function initKeySystem()
     end)
 end
 
--- Main Cheat Code (Wrapped in a function to load after authentication)
+-- Main Cheat Code
 local function loadCheat()
     debugPrint("Loading cheat functionality...")
     local success, errorMsg = pcall(function()
