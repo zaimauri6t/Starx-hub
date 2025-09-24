@@ -7,7 +7,7 @@ local GuiService = game:GetService("GuiService")
 -- Key System Variables
 local isAuthenticated = false
 local correctKey = "starxhubontop" -- Predefined key for simplicity
-local keyLink = "https://example.com/getkey" -- Placeholder link for key retrieval
+local keyLink = "https://link-hub.net/1402011/uBdd8VPMPt6F" -- Placeholder link for key retrieval
 local keyInputGui
 
 -- Create Key System GUI
