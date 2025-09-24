@@ -1,19 +1,33 @@
-local Players = game:GetService("Players")
+-- Initialize services with error handling
+local Players, UserInputService, HttpService, GuiService
+local success, result = pcall(function()
+    Players = game:GetService("Players")
+    UserInputService = game:GetService("UserInputService")
+    HttpService = game:GetService("HttpService")
+    GuiService = game:GetService("GuiService")
+    return true
+end)
+
+local function debugPrint(message)
+    print("[GunfightArenaX Debug] " .. tostring(message))
+end
+
+if not success then
+    debugPrint("Failed to initialize services: " .. tostring(result))
+    return -- Stop execution if services can't be loaded
+end
+
 local Player = Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local HttpService = game:GetService("HttpService")
-local GuiService = game:GetService("GuiService")
+if not Player then
+    debugPrint("LocalPlayer not found")
+    return
+end
 
 -- Key System Variables
 local isAuthenticated = false
 local correctKey = "starxhubontop" -- Predefined key for simplicity
 local keyLink = "https://link-hub.net/1402011/uBdd8VPMPt6F" -- Replace with actual key distribution link
 local keyInputGui
-
--- Debug function to log messages
-local function debugPrint(message)
-    print("[GunfightArenaX Debug] " .. tostring(message))
-end
 
 -- Create Key System GUI
 local function createKeySystemGui()
@@ -55,7 +69,7 @@ local function createKeySystemGui()
         local SubmitButton = Instance.new("TextButton")
         SubmitButton.Size = UDim2.new(0.9, 0, 0, 40)
         SubmitButton.Position = UDim2.new(0.05, 0, 0.45, 0)
-        SubmitButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+        SubmitButton.BackgroundColor3 = Color3.fromRGB(0 Hoffman, 120, 255)
         SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         SubmitButton.TextSize = 16
         SubmitButton.Font = Enum.Font.SourceSansBold
@@ -169,13 +183,12 @@ end
 local function loadCheat()
     debugPrint("Loading cheat functionality...")
     local success, errorMsg = pcall(function()
-        local players = game:GetService("Players")
-        local player = players.LocalPlayer
+        local players = Players
+        local player = Player
         local rs = game:GetService("RunService")
         local camera = workspace.CurrentCamera
         local replicated = game:GetService("ReplicatedStorage")
         local physics = game:GetService("PhysicsService")
-        local UserInputService = game:GetService('UserInputService')
 
         local silentaim = false
         local noforcefields = false
@@ -216,9 +229,9 @@ local function loadCheat()
 
         local primary, secondary, primarycamo, secondarycamo
 
-        local vortex = player:WaitForChild("PlayerScripts"):WaitForChild("Vortex")
-        local s = vortex.Modifiers:FindFirstChild("Steadiness")
-        local m = vortex.Modifiers:FindFirstChild("Mobility")
+        local vortex = player:WaitForChild("PlayerScripts"):WaitForChild("Vortex", 5)
+        local s = vortex and vortex.Modifiers:FindFirstChild("Steadiness")
+        local m = vortex and vortex.Modifiers:FindFirstChild("Mobility")
 
         local function removeRecoil()
             if norecoil then
@@ -238,7 +251,7 @@ local function loadCheat()
         end)
 
         rs.RenderStepped:Connect(function()
-            if infiniteammo and vortex.Enabled then
+            if infiniteammo and vortex and vortex.Enabled then
                 local restock = getsenv(vortex).Restock
                 if restock then restock() end
             end
@@ -1270,7 +1283,7 @@ local function loadCheat()
         SaveManager:LoadAutoloadConfig()
 
         Library:SetWatermarkVisibility(true)
-        Library:SetWatermark('Gunfight Arena X | Open sourced by zins')
+        Library:SetWatermark('Gunfight Arena X |')
 
         Library:OnUnload(function()
             WatermarkConnection:Disconnect()
@@ -1340,4 +1353,3 @@ while not isAuthenticated do
     wait(0.1)
 end
 debugPrint("Authentication complete, script running")
-
